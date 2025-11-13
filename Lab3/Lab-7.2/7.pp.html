@@ -1,0 +1,86 @@
+<html>
+
+<head>
+    <title>Form</title>
+</head>
+
+<body>
+
+    <form onsubmit="return validate()">
+        <table width="350">
+            <tr>
+                <td>
+
+                    <fieldset>
+                        <legend>Profile Picture</legend>
+
+                        <table>
+                            <tr>
+                                <td>User Id</td>
+                                <td><input type="text" id="uid" value="" onblur="checkProfile()"></td>
+                            </tr>
+
+                            <tr>
+                                <td>Picture</td>
+                                <td><input type="file" id="pic" value="" onblur="checkProfile()"></td>
+                            </tr>
+                        </table>
+
+                        <hr>
+                    </fieldset>
+
+                    <p id="error" style="color:red;"></p>
+
+                    <input type="submit" value="Submit"/>
+
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <script>
+
+        // onblur check
+        function checkProfile() {
+            let uid = document.getElementById('uid').value;
+            let pic = document.getElementById('pic').value;
+            let error = document.getElementById('error');
+
+            // empty uid
+            if (uid === "") {
+                error.innerHTML = "User ID cannot be empty";
+                return false;
+            }
+
+            // uid must be number
+            if (isNaN(uid)) {
+                error.innerHTML = "User ID must be a number";
+                return false;
+            }
+
+            // uid positive
+            if (Number(uid) <= 0) {
+                error.innerHTML = "User ID must be a positive number";
+                return false;
+            }
+
+            // picture check
+            if (pic === "") {
+                error.innerHTML = "Please select a picture";
+                return false;
+            }
+
+            error.innerHTML = "";
+            return true;
+        }
+
+        // submit check
+        function validate() {
+            return checkProfile();
+        }
+
+    </script>
+
+</body>
+
+</html>

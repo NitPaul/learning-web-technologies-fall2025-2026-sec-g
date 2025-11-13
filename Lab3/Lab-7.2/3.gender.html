@@ -1,0 +1,69 @@
+<html>
+
+<head>
+    <title>Form</title>
+</head>
+
+<body>
+
+    <form onsubmit="return validate()">
+        <table width="250">
+            <tr>
+                <td>
+
+                    <fieldset>
+                        <legend>Gender</legend>
+
+                        <table>
+                            <tr>
+                                <td>
+                                    <input type="radio" name="gender" value="male" onblur="checkGender()"> Male
+                                    <input type="radio" name="gender" value="female" onblur="checkGender()"> Female
+                                    <input type="radio" name="gender" value="other" onblur="checkGender()"> Other
+                                </td>
+                            </tr>
+                        </table>
+
+                    </fieldset>
+
+                    <p id="error" style="color:red;"></p>
+
+                    <input type="submit" value="Submit"/>
+
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <script>
+        // onblur check
+        function checkGender() {
+            let genders = document.getElementsByName('gender');
+            let error = document.getElementById('error');
+            let selected = false;
+
+            for (let i = 0; i < genders.length; i++) {
+                if (genders[i].checked) {
+                    selected = true;
+                    break;
+                }
+            }
+
+            if (!selected) {
+                error.innerHTML = "Please select a gender";
+                return false;
+            }
+
+            error.innerHTML = "";
+            return true;
+        }
+
+        // submit check
+        function validate() {
+            return checkGender();
+        }
+    </script>
+
+</body>
+
+</html>

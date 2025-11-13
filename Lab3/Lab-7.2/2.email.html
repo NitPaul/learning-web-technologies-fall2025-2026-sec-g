@@ -1,0 +1,89 @@
+<html>
+
+<head>
+    <title>Form</title>
+</head>
+
+<body>
+
+    <form onsubmit="return validate()">
+        <table>
+            <tr>
+                <td>Email</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="email" id="email" value="" onblur="checkEmail()">
+                    <button title="hint: sample@example.com">i</button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <p id="error" style="color:red;"></p>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="submit" value="Submit"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <script>
+        let emailField = document.getElementById('email');
+        let error = document.getElementById('error');
+
+        // onblur check
+        function checkEmail() {
+            let email = emailField.value;
+
+            // empty check
+            if (email === "") {
+                error.innerHTML = "Email cannot be empty";
+                return false;
+            }
+
+            // '@' check
+            let atPos = email.indexOf("@");
+            if (atPos === -1) {
+                error.innerHTML = "Email must contain '@'";
+                return false;
+            }
+
+            // before '@'
+            if (atPos === 0) {
+                error.innerHTML = "Email must have text before '@'";
+                return false;
+            }
+
+            // '.' after '@'
+            let dotPos = email.indexOf(".", atPos + 1);
+            if (dotPos === -1) {
+                error.innerHTML = "Email must contain a dot (.) after '@'";
+                return false;
+            }
+
+            // text after last '.'
+            if (dotPos === email.length - 1) {
+                error.innerHTML = "Email must have text after the dot";
+                return false;
+            }
+
+            // ok
+            error.innerHTML = "";
+            return true;
+        }
+
+        // submit check
+        function validate() {
+            return checkEmail();
+        }
+    </script>
+
+</body>
+
+</html>

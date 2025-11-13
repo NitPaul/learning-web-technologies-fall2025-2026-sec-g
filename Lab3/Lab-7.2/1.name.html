@@ -1,0 +1,92 @@
+<html>
+
+<head>
+    <title>Form</title>
+</head>
+
+<body>
+
+    <form onsubmit="return validate()">
+        <table>
+            <tr>
+                <td>Name</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="text" id="name" value="" onblur="checkName()">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <p id="error" style="color:red;"></p>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="submit" value="Submit"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <script>
+
+        let nameField = document.getElementById('name');
+        let error = document.getElementById('error');
+        
+        function checkName() {
+            let name = nameField.value;
+
+            // 1. cannot be empty
+            if (name === "") {
+                error.innerHTML = "Name cannot be empty";
+                return false;
+            }
+
+            // 2. at least two words
+            let parts = name.trim().split(" ");
+            if (parts.length < 2 || parts[0] === "" || parts[1] === "") {
+                error.innerHTML = "Name must contain at least two words";
+                return false;
+            }
+
+            // 4. starts with a letter
+            let firstChar = name.trim().charAt(0);
+            if (!((firstChar >= 'a' && firstChar <= 'z') || (firstChar >= 'A' && firstChar <= 'Z'))) {
+                error.innerHTML = "Name must start with a letter";
+                return false;
+            }
+
+            // 3. allowed characters only
+            for (let i = 0; i < name.length; i++) {
+                let ch = name.charAt(i);
+
+                if (ch === " ") continue;
+
+                let isLetter = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+                let isDot = ch === ".";
+                let isDash = ch === "-";
+
+                if (!(isLetter || isDot || isDash)) {
+                    error.innerHTML = "Only letters, dot, dash and space allowed";
+                    return false;
+                }
+            }
+
+            // all good
+            error.innerHTML = "";
+            return true;
+        }
+        // final submit validation
+        function validate() {
+            return checkName();
+        }
+
+    </script>
+
+</body>
+
+</html>

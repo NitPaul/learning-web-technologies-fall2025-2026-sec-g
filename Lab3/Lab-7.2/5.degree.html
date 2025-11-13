@@ -1,0 +1,71 @@
+<html>
+
+<head>
+    <title>Form</title>
+</head>
+
+<body>
+
+    <form onsubmit="return validate()">
+        <table width="250">
+            <tr>
+                <td>
+
+                    <fieldset>
+                        <legend>Degree</legend>
+
+                        <table>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="degree" value="ssc" onblur="checkDegree()"> SSC
+                                    <input type="checkbox" name="degree" value="hsc" onblur="checkDegree()"> HSC
+                                    <input type="checkbox" name="degree" value="bsc" onblur="checkDegree()"> BSc
+                                </td>
+                            </tr>
+                        </table>
+
+                    </fieldset>
+
+                    <p id="error" style="color:red;"></p>
+
+                    <input type="submit" value="Submit"/>
+
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <script>
+
+        // onblur check
+        function checkDegree() {
+            let degrees = document.getElementsByName('degree');
+            let error = document.getElementById('error');
+            let selected = false;
+
+            for (let i = 0; i < degrees.length; i++) {
+                if (degrees[i].checked) {
+                    selected = true;
+                    break;
+                }
+            }
+
+            if (!selected) {
+                error.innerHTML = "Please select at least one degree";
+                return false;
+            }
+
+            error.innerHTML = "";
+            return true;
+        }
+
+        // submit check
+        function validate() {
+            return checkDegree();
+        }
+
+    </script>
+
+</body>
+
+</html>

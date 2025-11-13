@@ -1,0 +1,97 @@
+<html>
+
+<head>
+    <title>Form</title>
+</head>
+
+<body>
+
+    <form onsubmit="return validate()">
+        <table width="700">
+            <tr>
+                <td>
+
+                    <fieldset>
+                        <legend>Date Of Birth</legend>
+
+                        <table>
+                            <tr>
+                                <td>dd</td>
+                                <td>mm</td>
+                                <td>yyyy</td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="text" id="dd" value="" onblur="checkDOB()"> /</td>
+                                <td><input type="text" id="mm" value="" onblur="checkDOB()"> /</td>
+                                <td><input type="text" id="yy" value="" onblur="checkDOB()"></td>
+                            </tr>
+                        </table>
+
+                        <hr>
+                    </fieldset>
+
+                    <p id="error" style="color:red;"></p>
+
+                    <input type="submit" value="Submit"/>
+
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <script>
+
+        // onblur check
+        function checkDOB() {
+            let dd = document.getElementById('dd').value;
+            let mm = document.getElementById('mm').value;
+            let yy = document.getElementById('yy').value;
+            let error = document.getElementById('error');
+
+            // empty check
+            if (dd === "" || mm === "" || yy === "") {
+                error.innerHTML = "Fields cannot be empty";
+                return false;
+            }
+
+            // must be numbers
+            if (isNaN(dd) || isNaN(mm) || isNaN(yy)) {
+                error.innerHTML = "All fields must be numbers";
+                return false;
+            }
+
+            dd = Number(dd);
+            mm = Number(mm);
+            yy = Number(yy);
+
+            // range checks
+            if (dd < 1 || dd > 31) {
+                error.innerHTML = "Day must be between 1 and 31";
+                return false;
+            }
+
+            if (mm < 1 || mm > 12) {
+                error.innerHTML = "Month must be between 1 and 12";
+                return false;
+            }
+
+            if (yy < 1900 || yy > 2016) {
+                error.innerHTML = "Year must be between 1900 and 2016";
+                return false;
+            }
+
+            error.innerHTML = "";
+            return true;
+        }
+
+        // submit check
+        function validate() {
+            return checkDOB();
+        }
+
+    </script>
+
+</body>
+
+</html>

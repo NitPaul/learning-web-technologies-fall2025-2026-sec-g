@@ -38,4 +38,19 @@ document.addEventListener("DOMContentLoaded", () => {
         display.value = display.value.slice(0, -1);
     }
 
+    function calculate() {
+    const value = display.value;
+
+    // Parcentage Operation
+    if (value.endsWith("%")) {
+        const number = parseFloat(value.slice(0, -1));
+        display.value = number / 100;
+        return;
+    }
+
+    // If no operator found
+    display.value = "Error";
+}
+
+
 });

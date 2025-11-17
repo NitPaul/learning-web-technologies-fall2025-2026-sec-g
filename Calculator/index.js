@@ -48,6 +48,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+        // Addition Operation
+    if (value.includes("+")) {
+        const parts = value.split("+");
+        const num1 = parseFloat(parts[0]);
+        const num2 = parseFloat(parts[1]);
+        display.value = num1 + num2;
+        return;
+    }
+
     // If no operator found
     display.value = "Error";
 }

@@ -78,6 +78,20 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    // Division Operation
+    if (value.includes("/")) {
+        const parts = value.split("/");
+        const num1 = parseFloat(parts[0]);
+        const num2 = parseFloat(parts[1]);
+
+        if (num2 === 0) {
+            display.value = "Error";
+            return;
+        }
+
+        display.value = num1 / num2;
+        return;
+    }
     // If no operator found
     display.value = "Error";
 }

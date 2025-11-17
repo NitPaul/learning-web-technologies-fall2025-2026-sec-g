@@ -30,6 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
         display.value += input;
     }
 
+    function clearDisplay() {
+        display.value = "";
+    }
 
+    function clearLastDigit() {
+        display.value = display.value.slice(0, -1);
+    }
 
 });

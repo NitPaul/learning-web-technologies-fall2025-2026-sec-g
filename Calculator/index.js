@@ -25,19 +25,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-    
+    // Show  Digits and Operation on Display
     function appendToDisplay(input) {
         display.value += input;
     }
 
+    // Clear Full Display
     function clearDisplay() {
         display.value = "";
     }
 
+    // Clear Last Digit on the Display
     function clearLastDigit() {
         display.value = display.value.slice(0, -1);
     }
 
+    // Main function for the math Operation 
     function calculate() {
     const value = display.value;
 
@@ -48,12 +51,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-        // Addition Operation
+    // Addition Operation
     if (value.includes("+")) {
         const parts = value.split("+");
         const num1 = parseFloat(parts[0]);
         const num2 = parseFloat(parts[1]);
         display.value = num1 + num2;
+        return;
+    }
+
+    // Subtraction Operation
+    if (value.includes("-")) {
+        const parts = value.split("-");
+        const num1 = parseFloat(parts[0]);
+        const num2 = parseFloat(parts[1]);
+        display.value = num1 - num2;
         return;
     }
 

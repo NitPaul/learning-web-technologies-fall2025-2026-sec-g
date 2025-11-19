@@ -3,171 +3,304 @@
     <title>Dynamic Form</title>
   </head>
   <body>
-    <h2>Dynamic Form For Lab 4</h2>
+    <h2>Dynamic Form</h2>
 
-    <label>Field Label:</label>
-    <input id="fieldLabel" type="text" />
-    <br /><br />
+    <div class="controls">
+      <label for="labelInput">Label</label>
+      <input
+        id="labelInput"
+        type="text"
+        placeholder="Enter label (e.g. Name)"
+      />
 
-    <label>Select Field Type</label>
-    <select id="fieldType">
-      <option value="">Select Type</option>
-      <option value="text">Text</option>
-      <option value="number">Number</option>
-      <option value="date">Date</option>
+      <label for="typeSelect">Type</label>
+      <select id="typeSelect" aria-label="Field type">
+        <option value="text">textbox</option>
+        <option value="number">number</option>
+        <option value="date">date</option>
+        <option value="checkbox">checkbox</option>
+        <option value="radio">radiobutton</option>
+      </select>
 
-      <option value="checkboxGroup">Checkbox Group</option>
-      <option value="radioGroup">Radio Group</option>
-    </select>
-    <br/>
+      <span id="optionArea" style="display: none">
+        <label for="optionInput">Option</label>
+        <input
+          id="optionInput"
+          type="text"
+          placeholder="Option value (e.g. Male)"
+        />
+      </span>
 
-    <div id="dynamicArea"></div>
-    <br />
-    <p id="errorMsg" style="color: red; display: none">
-      Please fill the field.
-    </p>
+      <button id="addButton">Add</button>
+    </div>
 
-    <h3>Saved Output</h3>
-    <div id="output"></div>
-    <!-- Java Script  -->
+    <span id="globalError" class="hint" style="display: none"
+      >Please fix the issues</span
+    >
+
+    <hr />
+
+    <div id="formArea"></div>
+
+    <div style="margin-top: 12px">
+      <button id="saveButton" style="display: none">Save Data</button>
+    </div>
+
+    <hr />
+    <h3>Saved Results</h3>
+    <div id="savedResults"></div>
+
     <script>
-      const labelInput = document.getElementById("fieldLabel");
-      const typeSelect = document.getElementById("fieldType");
-      const dynamicArea = document.getElementById("dynamicArea");
-      const errorMsg = document.getElementById("errorMsg");
-      const output = document.getElementById("output");
 
-      typeSelect.addEventListener("change", function () {
+      const labelInput = document.getElementById("labelInput");
+      const typeSelect = document.getElementById("typeSelect");
+      const optionArea = document.getElementById("optionArea");
+      const optionInput = document.getElementById("optionInput");
+      const addButton = document.getElementById("addButton");
+      const formArea = document.getElementById("formArea");
+      const saveButton = document.getElementById("saveButton");
+      const globalError = document.getElementById("globalError");
+      const savedResults = document.getElementById("savedResults");
+
+      // array to store the field
+      let fields = [];
+
+      function showGlobalError(message) {
+        globalError.textContent = message || "Please fix the issues.";
+        globalError.style.display = "inline-block";
+      }
+      function hideGlobalError() {
+        globalError.style.display = "none";
+        globalError.textContent = "";
+      }
+
+      // Toggle option input only for radio
+      typeSelect.addEventListener("change", () => {
+        if (typeSelect.value === "radio") {
+          optionArea.style.display = "inline-block";
+        } else {
+          optionArea.style.display = "none";
+          optionInput.value = "";
+        }
+        hideGlobalError();
+      });
+
+      // Add button behavior
+      addButton.addEventListener("click", () => {
+        hideGlobalError();
+
         const label = labelInput.value.trim();
         const type = typeSelect.value;
-
-        dynamicArea.innerHTML = "";
-        errorMsg.style.display = "none";
+        const opt = optionInput.value.trim();
 
         if (!label) {
-          alert("Please enter a label first.");
-          typeSelect.value = "";
+          showGlobalError("Please enter a label.");
+          return;
+        }
+        if (!type) {
+          showGlobalError("Please choose a type.");
+          return;
+        }
+        if (type === "radio" && !opt) {
+          showGlobalError("Please enter an option value for the radio button.");
           return;
         }
 
-        // Create SAVE button
-        const saveBtn = document.createElement("button");
-        saveBtn.innerText = "Save";
-
-        // TEXT / NUMBER / DATE input
-        if (type === "text" || type === "number" || type === "date") {
-          const input = document.createElement("input");
-          input.type = type;
-          dynamicArea.appendChild(input);
-          dynamicArea.appendChild(document.createElement("br"));
-          dynamicArea.appendChild(document.createElement("br"));
-          dynamicArea.appendChild(saveBtn);
-
-          saveBtn.addEventListener("click", function () {
-            const value = input.value.trim();
-
-            if (!value) {
-              errorMsg.style.display = "block";
-              return;
-            }
-
-            addOutput(label, value);
-            resetForm();
-          });
+        // If radio and a group with same label exists, append an option
+        if (type === "radio") {
+          const idx = fields.findIndex(
+            (f) => f.label === label && f.type === "radio"
+          );
+          if (idx !== -1) {
+            appendRadioOption(idx, opt);
+            clearInputs();
+            saveButton.style.display = "inline-block";
+            return;
+          }
         }
 
-        // CHECKBOX GROUP
-        if (type === "checkboxGroup") {
-          const options = ["Checkbox A", "Checkbox B", "Checkbox C"];
-
-          options.forEach(function (opt) {
-            const box = document.createElement("input");
-            box.type = "checkbox";
-            box.value = opt;
-
-            const lbl = document.createElement("label");
-            lbl.innerText = opt;
-
-            dynamicArea.appendChild(box);
-            dynamicArea.appendChild(lbl);
-            dynamicArea.appendChild(document.createElement("br"));
-          });
-
-          dynamicArea.appendChild(document.createElement("br"));
-          dynamicArea.appendChild(saveBtn);
-
-          saveBtn.addEventListener("click", function () {
-            const selected = [];
-            const boxes = dynamicArea.querySelectorAll(
-              "input[type='checkbox']"
-            );
-
-            boxes.forEach(function (b) {
-              if (b.checked) selected.push(b.value);
-            });
-
-            if (selected.length === 0) {
-              errorMsg.innerText = "Select at least one checkbox.";
-              errorMsg.style.display = "block";
-              return;
-            }
-
-            addOutput(label, selected.join(", "));
-            resetForm();
-          });
-        }
-
-        // RADIO GROUP
-        if (type === "radioGroup") {
-          const options = ["Option 1", "Option 2", "Option 3"];
-
-          options.forEach(function (opt) {
-            const r = document.createElement("input");
-            r.type = "radio";
-            r.name = "radioGroup";
-            r.value = opt;
-
-            const lbl = document.createElement("label");
-            lbl.innerText = opt;
-
-            dynamicArea.appendChild(r);
-            dynamicArea.appendChild(lbl);
-            dynamicArea.appendChild(document.createElement("br"));
-          });
-
-          dynamicArea.appendChild(document.createElement("br"));
-          dynamicArea.appendChild(saveBtn);
-
-          saveBtn.addEventListener("click", function () {
-            const selected = dynamicArea.querySelector(
-              "input[type='radio']:checked"
-            );
-
-            if (!selected) {
-              errorMsg.innerText = "Select one radio option.";
-              errorMsg.style.display = "block";
-              return;
-            }
-
-            addOutput(label, selected.value);
-            resetForm();
-          });
-        }
+        // Or create a new field block
+        createFieldBlock({ label, type, opt });
+        clearInputs();
+        saveButton.style.display = "inline-block";
       });
 
-      // Add output to list
-      function addOutput(label, value) {
-        const div = document.createElement("div");
-        div.innerHTML = "<strong>" + label + ":</strong> " + value;
-        output.appendChild(div);
+      // Create a new field
+      function createFieldBlock({ label, type, opt }) {
+        const index = fields.length;
+        const container = document.createElement("div");
+        container.className = "field-block";
+
+        if (type === "radio") container.id = `radio_group_${index}`;
+
+        // title
+        const title = document.createElement("label");
+        title.className = "field-title";
+        title.textContent = label + ":";
+        container.appendChild(title);
+
+        if (type === "radio") {
+          const radioName = `r_${index}_${Date.now().toString(36)}`;
+          const r = document.createElement("input");
+          r.type = "radio";
+          r.name = radioName;
+          r.id = `${container.id}_opt0`;
+          r.value = opt;
+
+          const l = document.createElement("label");
+          l.htmlFor = r.id;
+          l.textContent = " " + opt + " ";
+
+          container.appendChild(r);
+          container.appendChild(l);
+
+          fields.push({
+            label,
+            type: "radio",
+            domId: container.id,
+            radioName,
+            options: [opt],
+          });
+        } else if (type === "checkbox") {
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.id = `chk_${index}`;
+          container.appendChild(cb);
+          container.appendChild(document.createTextNode(" (check for Yes) "));
+
+          fields.push({ label, type: "checkbox", domId: cb.id });
+        } else {
+          const input = document.createElement("input");
+          input.type = type;
+          input.id = `input_${index}`;
+          container.appendChild(input);
+
+          fields.push({ label, type, domId: input.id });
+        }
+
+        // per-field error placeholder
+        const err = document.createElement("span");
+        err.className = "field-err";
+        err.id = `err_${fields.length - 1}`;
+        container.appendChild(err);
+
+        formArea.appendChild(container);
+        formArea.appendChild(document.createElement("br"));
       }
-      // Reset form after Save
-      function resetForm() {
+
+      // Append a new radio option to an existing group
+      function appendRadioOption(fieldIndex, optionValue) {
+        const field = fields[fieldIndex];
+        const container = document.getElementById(field.domId);
+        if (!container) return;
+
+        const optIndex = field.options.length;
+        const r = document.createElement("input");
+        r.type = "radio";
+        r.name = field.radioName;
+        r.id = `${field.domId}_opt_${optIndex}`;
+        r.value = optionValue;
+
+        const l = document.createElement("label");
+        l.htmlFor = r.id;
+        l.textContent = " " + optionValue + " ";
+
+        container.appendChild(r);
+        container.appendChild(l);
+
+        field.options.push(optionValue);
+      }
+
+      // Clear the small input area after Add
+      function clearInputs() {
         labelInput.value = "";
-        typeSelect.value = "";
-        dynamicArea.innerHTML = "";
-        errorMsg.style.display = "none";
+        optionInput.value = "";
+        typeSelect.value = "text";
+        optionArea.style.display = "none";
+        hideGlobalError();
       }
+
+      // Single save listener (no duplicates)
+      saveButton.addEventListener("click", handleSave);
+
+      function handleSave() {
+        hideGlobalError();
+        savedResults.innerHTML = "";
+
+        let allOk = true;
+        const results = [];
+
+        fields.forEach((f, i) => {
+          const errEl = document.getElementById(`err_${i}`);
+          if (errEl) errEl.textContent = "";
+
+          let value = "";
+          let filled = false;
+
+          if (f.type === "radio") {
+            const radios = document.getElementsByName(f.radioName);
+            for (const r of radios) {
+              if (r.checked) {
+                value = r.value;
+                filled = true;
+                break;
+              }
+            }
+          } else if (f.type === "checkbox") {
+            const cb = document.getElementById(f.domId);
+            if (cb) {
+              value = cb.checked ? "Yes" : "No";
+              filled = true;
+            }
+          } else {
+            const inp = document.getElementById(f.domId);
+            if (inp && inp.value.trim() !== "") {
+              value = inp.value.trim();
+              filled = true;
+            }
+          }
+
+          if (!filled) {
+            if (errEl) errEl.textContent = "* Required";
+            allOk = false;
+          } else {
+            results.push(`${escapeHtml(f.label)}: ${escapeHtml(value)}`);
+          }
+        });
+
+        if (!allOk) {
+          showGlobalError("Please complete required fields (marked *).");
+          return;
+        }
+
+        // Render saved results and clear the form area
+        results.forEach((r) => {
+          const p = document.createElement("p");
+          p.textContent = r;
+          savedResults.appendChild(p);
+        });
+
+        formArea.innerHTML = "";
+        fields = [];
+        saveButton.style.display = "none";
+      }
+
+      // small helper to avoid raw HTML injection
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      // initial state
+      (function init() {
+        typeSelect.value = "text";
+        optionArea.style.display = "none";
+        saveButton.style.display = "none";
+      })();
     </script>
   </body>
 </html>

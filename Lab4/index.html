@@ -1,0 +1,173 @@
+<html>
+  <head>
+    <title>Dynamic Form</title>
+  </head>
+  <body>
+    <h2>Dynamic Form For Lab 4</h2>
+
+    <label>Field Label:</label>
+    <input id="fieldLabel" type="text" />
+    <br /><br />
+
+    <label>Select Field Type</label>
+    <select id="fieldType">
+      <option value="">Select Type</option>
+      <option value="text">Text</option>
+      <option value="number">Number</option>
+      <option value="date">Date</option>
+
+      <option value="checkboxGroup">Checkbox Group</option>
+      <option value="radioGroup">Radio Group</option>
+    </select>
+    <br/>
+
+    <div id="dynamicArea"></div>
+    <br />
+    <p id="errorMsg" style="color: red; display: none">
+      Please fill the field.
+    </p>
+
+    <h3>Saved Output</h3>
+    <div id="output"></div>
+    <!-- Java Script  -->
+    <script>
+      const labelInput = document.getElementById("fieldLabel");
+      const typeSelect = document.getElementById("fieldType");
+      const dynamicArea = document.getElementById("dynamicArea");
+      const errorMsg = document.getElementById("errorMsg");
+      const output = document.getElementById("output");
+
+      typeSelect.addEventListener("change", function () {
+        const label = labelInput.value.trim();
+        const type = typeSelect.value;
+
+        dynamicArea.innerHTML = "";
+        errorMsg.style.display = "none";
+
+        if (!label) {
+          alert("Please enter a label first.");
+          typeSelect.value = "";
+          return;
+        }
+
+        // Create SAVE button
+        const saveBtn = document.createElement("button");
+        saveBtn.innerText = "Save";
+
+        // TEXT / NUMBER / DATE input
+        if (type === "text" || type === "number" || type === "date") {
+          const input = document.createElement("input");
+          input.type = type;
+          dynamicArea.appendChild(input);
+          dynamicArea.appendChild(document.createElement("br"));
+          dynamicArea.appendChild(document.createElement("br"));
+          dynamicArea.appendChild(saveBtn);
+
+          saveBtn.addEventListener("click", function () {
+            const value = input.value.trim();
+
+            if (!value) {
+              errorMsg.style.display = "block";
+              return;
+            }
+
+            addOutput(label, value);
+            resetForm();
+          });
+        }
+
+        // CHECKBOX GROUP
+        if (type === "checkboxGroup") {
+          const options = ["Checkbox A", "Checkbox B", "Checkbox C"];
+
+          options.forEach(function (opt) {
+            const box = document.createElement("input");
+            box.type = "checkbox";
+            box.value = opt;
+
+            const lbl = document.createElement("label");
+            lbl.innerText = opt;
+
+            dynamicArea.appendChild(box);
+            dynamicArea.appendChild(lbl);
+            dynamicArea.appendChild(document.createElement("br"));
+          });
+
+          dynamicArea.appendChild(document.createElement("br"));
+          dynamicArea.appendChild(saveBtn);
+
+          saveBtn.addEventListener("click", function () {
+            const selected = [];
+            const boxes = dynamicArea.querySelectorAll(
+              "input[type='checkbox']"
+            );
+
+            boxes.forEach(function (b) {
+              if (b.checked) selected.push(b.value);
+            });
+
+            if (selected.length === 0) {
+              errorMsg.innerText = "Select at least one checkbox.";
+              errorMsg.style.display = "block";
+              return;
+            }
+
+            addOutput(label, selected.join(", "));
+            resetForm();
+          });
+        }
+
+        // RADIO GROUP
+        if (type === "radioGroup") {
+          const options = ["Option 1", "Option 2", "Option 3"];
+
+          options.forEach(function (opt) {
+            const r = document.createElement("input");
+            r.type = "radio";
+            r.name = "radioGroup";
+            r.value = opt;
+
+            const lbl = document.createElement("label");
+            lbl.innerText = opt;
+
+            dynamicArea.appendChild(r);
+            dynamicArea.appendChild(lbl);
+            dynamicArea.appendChild(document.createElement("br"));
+          });
+
+          dynamicArea.appendChild(document.createElement("br"));
+          dynamicArea.appendChild(saveBtn);
+
+          saveBtn.addEventListener("click", function () {
+            const selected = dynamicArea.querySelector(
+              "input[type='radio']:checked"
+            );
+
+            if (!selected) {
+              errorMsg.innerText = "Select one radio option.";
+              errorMsg.style.display = "block";
+              return;
+            }
+
+            addOutput(label, selected.value);
+            resetForm();
+          });
+        }
+      });
+
+      // Add output to list
+      function addOutput(label, value) {
+        const div = document.createElement("div");
+        div.innerHTML = "<strong>" + label + ":</strong> " + value;
+        output.appendChild(div);
+      }
+      // Reset form after Save
+      function resetForm() {
+        labelInput.value = "";
+        typeSelect.value = "";
+        dynamicArea.innerHTML = "";
+        errorMsg.style.display = "none";
+      }
+    </script>
+  </body>
+</html>
